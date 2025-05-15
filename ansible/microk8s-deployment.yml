@@ -1,0 +1,136 @@
+# Refer to the following guide to replicate this play manually:
+# https://snapcraft.io/docs/installing-snap-on-rocky
+
+- name: Snap install
+  hosts: rocky
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Add EPEL repository
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+
+    - name: Upgrade all system packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+
+    - name: Install snapd, git, and bind-utils packages
+      ansible.builtin.dnf:
+        name:
+          - snapd
+          - bind-utils
+          - git
+        state: present
+
+    - name: Enable and start snapd.socket service
+      ansible.builtin.systemd_service:
+        name: snapd.socket
+        state: started
+        enabled: true
+
+    - name: Create symbolic for snap support
+      ansible.builtin.file:
+        src: /var/lib/snapd/snap
+        dest: /snap
+        owner: root
+        group: root
+        state: link
+
+# Refer to the following guide to replicate this play manually:
+# https://wimma-capstone.pages.labranet.jamk.fi/support-material/3.%20OPS/Reference%20Product%20-%20Prestashop/Setup%20guides/Helm/helm-prestashop-deployment-internal-repos/
+
+- name: Microk8s install
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Install microk8s via snap
+      community.general.snap:
+        name: microk8s
+        classic: true
+        # version of microk8s installed during the creation of this playbook
+        # channel: 1.32/stable
+      become: true
+
+    - name: Add current user to microk8s group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        append: true
+        groups: microk8s
+      become: true
+
+    - name: Create .kube directory with proper permissions
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.kube"
+        state: directory
+        mode: "0700"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Reset ssh connection to apply group changes
+      ansible.builtin.meta: reset_connection
+
+    - name: Enable required microk8s addons
+      ansible.builtin.command: "microk8s enable {{ item }}"
+      loop:
+        - ingress
+        - cert-manager
+        - hostpath-storage
+      register: enable_addons_result
+      changed_when: "'already enabled' not in enable_addons_result.stdout"
+
+    - name: Get floating_ip
+      ansible.builtin.command:
+        cmd: dig +short myip.opendns.com @resolver1.opendns.com
+      register: floating_ip_result
+      changed_when: false
+
+    - name: Get domain from floating_ip
+      ansible.builtin.shell: |
+        set -o pipefail
+        dig +short -x {{ floating_ip_result.stdout }} | sed 's/\.$//'
+      register: domain_result
+      changed_when: false
+      args:
+        executable: /bin/bash
+
+    - name: Enable metallb with floating_ip range
+      ansible.builtin.command:
+        cmd: microk8s enable metallb "{{ floating_ip_result.stdout }}-{{ floating_ip_result.stdout }}"
+      register: enable_metallb_result
+      changed_when: "'already enabled' not in enable_metallb_result.stdout"
+
+    - name: Clone PrestaShop helm chart repository
+      ansible.builtin.git:
+        repo: "https://gitlab.labranet.jamk.fi/presta-shop-development-release-x/presta-shop-deployment/presta-shop-helm-x.git"
+        dest: "{{ ansible_env.HOME }}/presta-shop-helm-x"
+        single_branch: true
+        version: main
+
+    - name: Create persistent storage directory for Prestashop
+      ansible.builtin.file:
+        path: /mnt/prestashop-storage
+        state: directory
+        mode: "0755"
+      become: true
+
+    - name: Check for existing PrestaShop deployment
+      ansible.builtin.command:
+        cmd: microk8s helm list --deployed
+      register: helm_list_result
+      changed_when: false
+
+    - name: Deploy PrestaShop using helm chart
+      ansible.builtin.shell: |
+        microk8s helm install presta-helm prestashop \
+          --set prestashop.env.psDomain="{{ domain_result.stdout }}" \
+          --set prestashop.ingress.enabled=true \
+          --set prestashop.ingress.letsencrypt.isProd=true \
+          --set common.persistence.enabled=true
+      args:
+        chdir: presta-shop-helm-x/
+      when: "'presta-helm' not in helm_list_result.stdout"
+      changed_when: "'presta-helm' not in helm_list_result.stdout"
