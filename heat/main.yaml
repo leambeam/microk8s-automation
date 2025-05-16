@@ -94,13 +94,13 @@ resources:
     type: OS::Nova::KeyPair
     properties:
       name: ubuntu_key_pair
-      public_key: { get_file: ../keys/key1.pub }
+      public_key: { get_file: ../keys/ubuntu_key.pub }
 
   rocky_ssh_key:
     type: OS::Nova::KeyPair
     properties:
       name: rocky_key_pair
-      public_key: { get_file: ../keys/key2.pub }
+      public_key: { get_file: ../keys/rocky_key.pub }
  
   # Network ports
   ubuntu_private_network_port:

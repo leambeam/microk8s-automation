@@ -36,12 +36,12 @@ resource "openstack_networking_secgroup_rule_v2" "rocky_security_group_rule" {
 # SSH Key pairs
 resource "openstack_compute_keypair_v2" "ubuntu_ssh_key" {
   name       = "ubuntu_key_pair"
-  public_key = file("../keys/key1.pub")
+  public_key = file("../keys/ubuntu_key.pub")
 }
 
 resource "openstack_compute_keypair_v2" "rocky_ssh_key" {
   name       = "rocky_key_pair"
-  public_key = file("../keys/key2.pub")
+  public_key = file("../keys/rocky_key.pub")
 }
 
 # Network ports
