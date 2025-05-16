@@ -14,6 +14,7 @@ Examples:
 
   bash scripts/compare-deployments.sh terraform ==> output: terraform_deployment_date.txt
   bash scripts/compare-deployments.sh heat ==> output: heat_deployment_date.txt
+  bash scripts/compare-deployments.sh manual ==> output: manual_deployment_date.txt
   bash scripts/compare-deployments.sh ==> output: unknown_deployment_date.txt
 
   Comparing deployments:
@@ -22,16 +23,18 @@ Examples:
 
 '
 
-
 # Generic parameters
 DEPLOYMENT_TYPE="${1:-"unknown"}"
 TIMESTAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 FILENAME="${DEPLOYMENT_TYPE}_deployment_${TIMESTAMP}.txt"
 
-# Define resource base names
-VM_BASE_NAME="vm"
-SEC_GROUP_BASE_NAME="security_group"
-KEY_PAIR_BASE_NAME="key-pair"
+# Define resource base names according to new naming conventions
+UBUNTU_VM="ubuntu-vm"
+ROCKY_VM="rocky-vm"
+UBUNTU_SEC_GROUP="ubuntu_security_group"
+ROCKY_SEC_GROUP="rocky_security_group"
+UBUNTU_KEY_PAIR="ubuntu_key_pair"
+ROCKY_KEY_PAIR="rocky_key_pair"
 
 # Create output directory if it doesn't exist
 mkdir -p "compare-deployments"
@@ -46,31 +49,31 @@ FULL_PATH="compare-deployments/$FILENAME"
   echo "Project: $(openstack token issue -f value -c project_id)"
   
   echo -e "\n=== SPECIFIC INSTANCES ==="
-  echo -e "\n${VM_BASE_NAME}-1:"
-  openstack server show "${VM_BASE_NAME}-1" 2>/dev/null || echo "${VM_BASE_NAME}-1 not found"
-  echo -e "\n${VM_BASE_NAME}-2:"
-  openstack server show "${VM_BASE_NAME}-2" 2>/dev/null || echo "${VM_BASE_NAME}-2 not found"
+  echo -e "\n${UBUNTU_VM}:"
+  openstack server show "${UBUNTU_VM}" 2>/dev/null || echo "${UBUNTU_VM} not found"
+  echo -e "\n${ROCKY_VM}:"
+  openstack server show "${ROCKY_VM}" 2>/dev/null || echo "${ROCKY_VM} not found"
   
   echo -e "\n=== ATTACHED VOLUMES ==="
   openstack volume list --status in-use 2>/dev/null || echo "None of the volumes are in use"
   
   echo -e "\n=== SPECIFIC SECURITY GROUPS ==="
-  echo -e "\n${SEC_GROUP_BASE_NAME}_1:"
-  openstack security group show "${SEC_GROUP_BASE_NAME}_1" 2>/dev/null || echo "${SEC_GROUP_BASE_NAME}_1 not found"
-  echo -e "\n${SEC_GROUP_BASE_NAME}_2:"
-  openstack security group show "${SEC_GROUP_BASE_NAME}_2" 2>/dev/null || echo "${SEC_GROUP_BASE_NAME}_2 not found"
+  echo -e "\n${UBUNTU_SEC_GROUP}:"
+  openstack security group show "${UBUNTU_SEC_GROUP}" 2>/dev/null || echo "${UBUNTU_SEC_GROUP} not found"
+  echo -e "\n${ROCKY_SEC_GROUP}:"
+  openstack security group show "${ROCKY_SEC_GROUP}" 2>/dev/null || echo "${ROCKY_SEC_GROUP} not found"
   
   echo -e "\n=== SECURITY GROUP RULES ==="
-  echo -e "\n${SEC_GROUP_BASE_NAME}_1 rules:"
-  openstack security group rule list "${SEC_GROUP_BASE_NAME}_1" 2>/dev/null || echo "${SEC_GROUP_BASE_NAME}_1 not found"
-  echo -e "\n${SEC_GROUP_BASE_NAME}_2 rules:"
-  openstack security group rule list "${SEC_GROUP_BASE_NAME}_2" 2>/dev/null || echo "${SEC_GROUP_BASE_NAME}_2 not found"
+  echo -e "\n${UBUNTU_SEC_GROUP} rules:"
+  openstack security group rule list "${UBUNTU_SEC_GROUP}" 2>/dev/null || echo "${UBUNTU_SEC_GROUP} not found"
+  echo -e "\n${ROCKY_SEC_GROUP} rules:"
+  openstack security group rule list "${ROCKY_SEC_GROUP}" 2>/dev/null || echo "${ROCKY_SEC_GROUP} not found"
   
   echo -e "\n=== SPECIFIC KEYPAIRS ==="
-  echo -e "\n${KEY_PAIR_BASE_NAME}-1:"
-  openstack keypair show "${KEY_PAIR_BASE_NAME}-1" 2>/dev/null || echo "${KEY_PAIR_BASE_NAME}-1 not found"
-  echo -e "\n${KEY_PAIR_BASE_NAME}-2:"
-  openstack keypair show "${KEY_PAIR_BASE_NAME}-2" 2>/dev/null || echo "${KEY_PAIR_BASE_NAME}-2 not found"
+  echo -e "\n${UBUNTU_KEY_PAIR}:"
+  openstack keypair show "${UBUNTU_KEY_PAIR}" 2>/dev/null || echo "${UBUNTU_KEY_PAIR} not found"
+  echo -e "\n${ROCKY_KEY_PAIR}:"
+  openstack keypair show "${ROCKY_KEY_PAIR}" 2>/dev/null || echo "${ROCKY_KEY_PAIR} not found"
   
   echo -e "\n=== ACTIVE PORTS ==="
   openstack port list --status ACTIVE
