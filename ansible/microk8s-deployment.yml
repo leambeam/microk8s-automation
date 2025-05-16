@@ -16,6 +16,7 @@
       ansible.builtin.dnf:
         name: "*"
         state: latest
+      # noqa: package-latest -- ignore linter warning
 
     - name: Install snapd, git, and bind-utils packages
       ansible.builtin.dnf:
