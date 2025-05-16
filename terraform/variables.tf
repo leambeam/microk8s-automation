@@ -1,43 +1,59 @@
-variable "security_group_ports_1" {
+# Default variables are referenced from default-vars.tfvars file
+
+variable "ubuntu_security_group_ports" {
   type        = list(number)
-  description = "List of ports to open in security group 1 (SSH, HTTP, HTTPS)"
-  default     = [22, 80, 443]
+  description = "List of ports to open in Ubuntu security group (SSH, HTTP, HTTPS)"
 }
 
-variable "security_group_ports_2" {
+variable "rocky_security_group_ports" {
   type        = list(number)
-  description = "List of ports to open in security group 2 (SSH, HTTP, HTTPS)"
-  default     = [22, 80, 443]
+  description = "List of ports to open in Rocky security group (SSH, HTTP, HTTPS)"
 }
 
-variable "instance_type" {
+# See all flavors: https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/
+variable "ubuntu_instance" {
   type        = string
-  description = "Flavor type for VMs"
-  default     = "standard.medium"
+  description = "Flavor type for Ubuntu"
   validation {
-    condition     = contains(["standard.tiny", "standard.small", "standard.medium", "standard.large"], var.instance_type)
+    condition     = contains(["standard.tiny", "standard.small", "standard.medium", "standard.large"], var.ubuntu_instance)
     error_message = "Valid values are standard.tiny, standard.small, standard.medium, or standard.large."
   }
+  # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25 (standard.tiny)
+  # VCPUs: 2 | RAM: 1.9 | Billing/h: 0.5  (standard.small)
+  # VCPUs: 3 | RAM: 3.9 | Billing/h: 1    (standard.medium)
+  # VCPUs: 4 | RAM: 7.8 | Billing/h: 2    (standard.large)
 }
 
-variable "pouta_image_1" {
-  type    = string
-  default = "Ubuntu-24.04"
+# See all flavors: https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/
+variable "rocky_instance" {
+  type        = string
+  description = "Flavor type for Rocky"
+  validation {
+    condition     = contains(["standard.tiny", "standard.small", "standard.medium", "standard.large"], var.rocky_instance)
+    error_message = "Valid values are standard.tiny, standard.small, standard.medium, or standard.large."
+  }
+  # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25 (standard.tiny)
+  # VCPUs: 2 | RAM: 1.9 | Billing/h: 0.5  (standard.small)
+  # VCPUs: 3 | RAM: 3.9 | Billing/h: 1    (standard.medium)
+  # VCPUs: 4 | RAM: 7.8 | Billing/h: 2    (standard.large)
 }
 
-variable "pouta_image_2" {
-  type    = string
-  default = "Rocky-9.5"
+variable "ubuntu_image" {
+  type        = string
+  description = "Ubuntu image"
 }
 
-# Referenced from *.tfvars file
+variable "rocky_image" {
+  type        = string
+  description = "Rocky image"
+}
+
 variable "private_network_id" {
   type        = string
-  description = "ID of the private Neutron network"
+  description = "ID of the private Neutron network for ports"
   sensitive   = true
 }
 
-# Referenced from *.tfvars file
 variable "public_network_id" {
   type        = string
   description = "ID of the public Neutron network for floating IPs"
@@ -47,5 +63,4 @@ variable "public_network_id" {
 variable "public_network_name" {
   type        = string
   description = "Name of the public network for floating IPs"
-  default     = "public"
 }

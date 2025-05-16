@@ -1,9 +1,9 @@
-output "floating_ip_1" {
-  description = "Floating IP address 1"
-  value       = openstack_networking_floatingip_v2.floating_ip_1.address
+output "ubuntu_floating_ip" {
+  description = "Ubuntu floating IP address"
+  value       = openstack_networking_floatingip_v2.ubuntu_floating_ip.address
 }
 
-output "floating_ip_2" {
-  description = "Floating IP address 2"
-  value       = openstack_networking_floatingip_v2.floating_ip_2.address
+output "rocky_floating_ip" {
+  description = "Rocky floating IP address"
+  value       = openstack_networking_floatingip_v2.rocky_floating_ip.address
 }

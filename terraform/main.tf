@@ -1,78 +1,80 @@
+# cPouta VM deployment - Creates Ubuntu and Rocky Linux VMs with security groups, network ports, and floating IPs
+
 # Security Groups
-resource "openstack_networking_secgroup_v2" "security_group_1" {
-  name        = "security_group_1"
-  description = "Security group for Ubuntu VM"
+resource "openstack_networking_secgroup_v2" "ubuntu_security_group" {
+  name        = "ubuntu_security_group"
+  description = "Security group for Ubuntu"
 }
 
-resource "openstack_networking_secgroup_rule_v2" "security_group_rule_1" {
-  count             = length(var.security_group_ports_1)
+resource "openstack_networking_secgroup_rule_v2" "ubuntu_security_group_rule" {
+  count             = length(var.ubuntu_security_group_ports)
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
-  port_range_min    = var.security_group_ports_1[count.index]
-  port_range_max    = var.security_group_ports_1[count.index]
-  security_group_id = openstack_networking_secgroup_v2.security_group_1.id
-  depends_on        = [openstack_networking_secgroup_v2.security_group_1]
+  port_range_min    = var.ubuntu_security_group_ports[count.index]
+  port_range_max    = var.ubuntu_security_group_ports[count.index]
+  security_group_id = openstack_networking_secgroup_v2.ubuntu_security_group.id
+  depends_on        = [openstack_networking_secgroup_v2.ubuntu_security_group]
 }
 
-resource "openstack_networking_secgroup_v2" "security_group_2" {
-  name        = "security_group_2"
-  description = "Security group for Rocky VM"
+resource "openstack_networking_secgroup_v2" "rocky_security_group" {
+  name        = "rocky_security_group"
+  description = "Security group for Rocky"
 }
 
-resource "openstack_networking_secgroup_rule_v2" "security_group_rule_2" {
-  count             = length(var.security_group_ports_2)
+resource "openstack_networking_secgroup_rule_v2" "rocky_security_group_rule" {
+  count             = length(var.rocky_security_group_ports)
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
-  port_range_min    = var.security_group_ports_2[count.index]
-  port_range_max    = var.security_group_ports_2[count.index]
-  security_group_id = openstack_networking_secgroup_v2.security_group_2.id
-  depends_on        = [openstack_networking_secgroup_v2.security_group_2]
+  port_range_min    = var.rocky_security_group_ports[count.index]
+  port_range_max    = var.rocky_security_group_ports[count.index]
+  security_group_id = openstack_networking_secgroup_v2.rocky_security_group.id
+  depends_on        = [openstack_networking_secgroup_v2.rocky_security_group]
 }
 
 # SSH Key pairs
-resource "openstack_compute_keypair_v2" "ssh_key_1" {
-  name       = "key-pair-1"
+resource "openstack_compute_keypair_v2" "ubuntu_ssh_key" {
+  name       = "ubuntu_key_pair"
   public_key = file("../keys/key1.pub")
 }
 
-resource "openstack_compute_keypair_v2" "ssh_key_2" {
-  name       = "key-pair-2"
+resource "openstack_compute_keypair_v2" "rocky_ssh_key" {
+  name       = "rocky_key_pair"
   public_key = file("../keys/key2.pub")
 }
 
-# Private network ports
-resource "openstack_networking_port_v2" "private_network_port_1" {
+# Network ports
+resource "openstack_networking_port_v2" "ubuntu_private_network_port" {
   network_id         = var.private_network_id
-  security_group_ids = [openstack_networking_secgroup_v2.security_group_1.id]
+  security_group_ids = [openstack_networking_secgroup_v2.ubuntu_security_group.id]
 }
 
-resource "openstack_networking_port_v2" "private_network_port_2" {
+resource "openstack_networking_port_v2" "rocky_private_network_port" {
   network_id         = var.private_network_id
-  security_group_ids = [openstack_networking_secgroup_v2.security_group_2.id]
+  security_group_ids = [openstack_networking_secgroup_v2.rocky_security_group.id]
 }
 
 # Find the image IDs
-data "openstack_images_image_v2" "vm_image_1" {
-  name        = var.pouta_image_1
+data "openstack_images_image_v2" "ubuntu_image" {
+  name        = var.ubuntu_image
   most_recent = true
 }
 
-data "openstack_images_image_v2" "vm_image_2" {
-  name        = var.pouta_image_2
+data "openstack_images_image_v2" "rocky_image" {
+  name        = var.rocky_image
   most_recent = true
 }
 
 # VM instances
-resource "openstack_compute_instance_v2" "vm_1" {
-  name              = "vm-1"
-  flavor_name       = var.instance_type
-  key_pair          = openstack_compute_keypair_v2.ssh_key_1.name
+resource "openstack_compute_instance_v2" "ubuntu_vm" {
+  name              = "ubuntu-vm"
+  flavor_name       = var.ubuntu_instance
+  key_pair          = openstack_compute_keypair_v2.ubuntu_ssh_key.name
   availability_zone = "nova"
-  
+
   block_device {
-    uuid                  = data.openstack_images_image_v2.vm_image_1.id
+    uuid                  = data.openstack_images_image_v2.ubuntu_image.id
     source_type           = "image"
     volume_size           = 80
     boot_index            = 0
@@ -81,18 +83,18 @@ resource "openstack_compute_instance_v2" "vm_1" {
   }
 
   network {
-    port = openstack_networking_port_v2.private_network_port_1.id
+    port = openstack_networking_port_v2.ubuntu_private_network_port.id
   }
 }
 
-resource "openstack_compute_instance_v2" "vm_2" {
-  name              = "vm-2"
-  flavor_name       = var.instance_type
-  key_pair          = openstack_compute_keypair_v2.ssh_key_2.name
+resource "openstack_compute_instance_v2" "rocky_vm" {
+  name              = "rocky-vm"
+  flavor_name       = var.rocky_instance
+  key_pair          = openstack_compute_keypair_v2.rocky_ssh_key.name
   availability_zone = "nova"
 
   block_device {
-    uuid                  = data.openstack_images_image_v2.vm_image_2.id
+    uuid                  = data.openstack_images_image_v2.rocky_image.id
     source_type           = "image"
     volume_size           = 80
     boot_index            = 0
@@ -101,30 +103,30 @@ resource "openstack_compute_instance_v2" "vm_2" {
   }
 
   network {
-    port = openstack_networking_port_v2.private_network_port_2.id
+    port = openstack_networking_port_v2.rocky_private_network_port.id
   }
 }
 
 # Floating IPs
-resource "openstack_networking_floatingip_v2" "floating_ip_1" {
+resource "openstack_networking_floatingip_v2" "ubuntu_floating_ip" {
   pool       = var.public_network_name
-  depends_on = [openstack_compute_instance_v2.vm_1]
+  depends_on = [openstack_compute_instance_v2.ubuntu_vm]
 }
 
-resource "openstack_networking_floatingip_v2" "floating_ip_2" {
+resource "openstack_networking_floatingip_v2" "rocky_floating_ip" {
   pool       = var.public_network_name
-  depends_on = [openstack_compute_instance_v2.vm_2]
+  depends_on = [openstack_compute_instance_v2.rocky_vm]
 }
 
 # Floating IP associations
-resource "openstack_networking_floatingip_associate_v2" "association_1" {
-  floating_ip = openstack_networking_floatingip_v2.floating_ip_1.address
-  port_id     = openstack_networking_port_v2.private_network_port_1.id
-  depends_on  = [openstack_compute_instance_v2.vm_1]
+resource "openstack_networking_floatingip_associate_v2" "ubuntu_floating_ip_association" {
+  floating_ip = openstack_networking_floatingip_v2.ubuntu_floating_ip.address
+  port_id     = openstack_networking_port_v2.ubuntu_private_network_port.id
+  depends_on  = [openstack_compute_instance_v2.ubuntu_vm]
 }
 
-resource "openstack_networking_floatingip_associate_v2" "association_2" {
-  floating_ip = openstack_networking_floatingip_v2.floating_ip_2.address
-  port_id     = openstack_networking_port_v2.private_network_port_2.id
-  depends_on  = [openstack_compute_instance_v2.vm_2]
+resource "openstack_networking_floatingip_associate_v2" "rocky_floating_ip_association" {
+  floating_ip = openstack_networking_floatingip_v2.rocky_floating_ip.address
+  port_id     = openstack_networking_port_v2.rocky_private_network_port.id
+  depends_on  = [openstack_compute_instance_v2.rocky_vm]
 }
