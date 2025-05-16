@@ -1,0 +1,8 @@
+# Main OpenStack client
+python-openstackclient==7.4.0
+
+# Heat stacks
+python-heatclient==4.1.0
+
+# Ansible
+ansible==11.4.0
