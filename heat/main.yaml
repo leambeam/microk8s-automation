@@ -1,9 +1,8 @@
 heat_template_version: rocky # 2018-08-31
 
-description: cPouta VM deployment
+description: cPouta VM deployment - Creates Ubuntu and Rocky Linux VMs with security groups, network ports, and floating IPs
 
 parameters:
-
   ubuntu_security_group_ports:
     type: comma_delimited_list
     label: Allowed ports
@@ -19,26 +18,24 @@ parameters:
     type: string
     label: Instance Type
     description: Flavor type for Ubuntu
-
     constraints:
       - allowed_values:
-        - standard.tiny	  # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25
-        - standard.small	# VCPUs: 2 | RAM: 1.9 | Billing/h: 0.5
-        - standard.medium	# VCPUs: 3 | RAM: 3.9 | Billing/h: 1
-        - standard.large	# VCPUs: 4 | RAM: 7.8 | Billing/h: 2
+        - standard.tiny   # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25
+        - standard.small  # VCPUs: 2 | RAM: 1.9 | Billing/h: 0.5
+        - standard.medium # VCPUs: 3 | RAM: 3.9 | Billing/h: 1
+        - standard.large  # VCPUs: 4 | RAM: 7.8 | Billing/h: 2
   
   # See all flavors: https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/ 
   rocky_instance:
     type: string
     label: Instance Type
     description: Flavor type for Rocky
-
     constraints:
       - allowed_values:
-        - standard.tiny	  # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25
-        - standard.small	# VCPUs: 2 | RAM: 1.9 | Billing/h: 0.5
-        - standard.medium	# VCPUs: 3 | RAM: 3.9 | Billing/h: 1
-        - standard.large	# VCPUs: 4 | RAM: 7.8 | Billing/h: 2
+        - standard.tiny   # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25
+        - standard.small  # VCPUs: 2 | RAM: 1.9 | Billing/h: 0.5
+        - standard.medium # VCPUs: 3 | RAM: 3.9 | Billing/h: 1
+        - standard.large  # VCPUs: 4 | RAM: 7.8 | Billing/h: 2
   
   ubuntu_image:
     type: string
@@ -51,7 +48,7 @@ parameters:
   private_network_id:
     type: string
     label: Private Network ID
-    description: ID of the private Neutron network for ports 
+    description: ID of the private Neutron network for ports
 
   public_network_id:
     type: string
@@ -59,10 +56,10 @@ parameters:
     description: ID of the public Neutron network for floating IPs
 
 resources:
-
+  # Security Groups
   ubuntu_security_group: 
     type: OS::Neutron::SecurityGroup
-    description: Security group for Ubuntu 
+    description: Security group for Ubuntu
     properties: 
       name: ubuntu_security_group
       rules: 
@@ -92,34 +89,33 @@ resources:
             ethertype: IPv4
             direction: ingress
 
-  # Public key for Ubuntu
+  # SSH Key pairs
   ubuntu_ssh_key:
     type: OS::Nova::KeyPair
     properties:
       name: ubuntu_key_pair
       public_key: { get_file: ../keys/key1.pub }
 
-  # Public key for Rocky
   rocky_ssh_key:
     type: OS::Nova::KeyPair
     properties:
       name: rocky_key_pair
       public_key: { get_file: ../keys/key2.pub }
-
-  # Network port for Ubuntu
+ 
+  # Network ports
   ubuntu_private_network_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: private_network_id } #private network ID
+      network_id: { get_param: private_network_id }
       security_groups: [{get_resource: ubuntu_security_group}]
   
-  # Network port for Rocky
   rocky_private_network_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: private_network_id } #private network ID
+      network_id: { get_param: private_network_id }
       security_groups: [{get_resource: rocky_security_group}]
 
+  # VM instances
   ubuntu_vm:
     type: OS::Nova::Server
     description: Ubuntu VM
@@ -154,6 +150,7 @@ resources:
           delete_on_termination: true # change to false if you want to preserve your volume
       diskConfig: AUTO
 
+  # Floating IPs
   ubuntu_floating_ip:
     type: OS::Neutron::FloatingIP
     description: floating_ip for Ubuntu
@@ -168,6 +165,7 @@ resources:
     properties:
       floating_network: { get_param: public_network_id }
 
+  # Floating IP associations
   ubuntu_floating_ip_association:
     type: OS::Neutron::FloatingIPAssociation
     description: floating_ip association for Ubuntu
@@ -183,7 +181,6 @@ resources:
       port_id: { get_resource: rocky_private_network_port }
 
 outputs:
-
   ubuntu_floating_ip: 
     description: Floating ip address for Ubuntu
     value: { get_attr: [ubuntu_floating_ip, floating_ip_address] }
