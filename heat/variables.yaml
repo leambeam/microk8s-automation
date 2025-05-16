@@ -1,6 +1,6 @@
 parameter_defaults:
-  ubuntu_security_group_ports: "22,80,443,228"
-  rocky_security_group_ports: "22,80,443,500"
+  ubuntu_security_group_ports: "22,80,443"
+  rocky_security_group_ports: "22,80,443"
   ubuntu_instance: standard.medium
   rocky_instance: standard.medium
   ubuntu_image: "Ubuntu-24.04"
