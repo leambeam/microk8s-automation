@@ -1,0 +1,15 @@
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Terraform lock file
+*.lock.hcl
+
+# Terraform provider
+.terraform/
+
+# CSC authefication file
+.project_*-openrc.sh
+
+# Mac 
+.DS_Store
