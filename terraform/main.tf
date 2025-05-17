@@ -11,6 +11,7 @@ resource "openstack_networking_secgroup_rule_v2" "ubuntu_security_group_rule" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
+  remote_ip_prefix  = "0.0.0.0/0"
   port_range_min    = var.ubuntu_security_group_ports[count.index]
   port_range_max    = var.ubuntu_security_group_ports[count.index]
   security_group_id = openstack_networking_secgroup_v2.ubuntu_security_group.id
@@ -27,6 +28,7 @@ resource "openstack_networking_secgroup_rule_v2" "rocky_security_group_rule" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
+  remote_ip_prefix  = "0.0.0.0/0"
   port_range_min    = var.rocky_security_group_ports[count.index]
   port_range_max    = var.rocky_security_group_ports[count.index]
   security_group_id = openstack_networking_secgroup_v2.rocky_security_group.id

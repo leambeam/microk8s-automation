@@ -72,6 +72,7 @@ resources:
             port_range_max: <%port%>
             ethertype: IPv4
             direction: ingress
+            remote_ip_prefix: "0.0.0.0/0"
 
   rocky_security_group: 
     type: OS::Neutron::SecurityGroup
@@ -88,6 +89,7 @@ resources:
             port_range_max: <%port%>
             ethertype: IPv4
             direction: ingress
+            remote_ip_prefix: "0.0.0.0/0"
 
   # SSH Key pairs
   ubuntu_ssh_key:
