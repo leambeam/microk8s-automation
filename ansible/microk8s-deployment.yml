@@ -74,6 +74,18 @@
     - name: Reset ssh connection to apply group changes
       ansible.builtin.meta: reset_connection
 
+    - name: Verify group membership
+      ansible.builtin.shell: |
+        set -o pipefail
+        id -nG | grep -q microk8s
+      register: group_check
+      until: group_check.rc == 0
+      retries: 5
+      delay: 5
+      changed_when: false
+      args:
+        executable: /bin/bash
+
     - name: Enable required microk8s addons
       ansible.builtin.command: "microk8s enable {{ item }}"
       loop:
