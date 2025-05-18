@@ -20,6 +20,7 @@ Examples:
   Comparing deployments:
 
   diff compare-deployments/terraform_deployment_date.txt compare-deployments/heat_deployment_date.txt > compare-deployments/results
+  diff3 compare-deployments/terraform_deployment_date.txt compare-deployments/heat_deployment_date.txt compare-deployments/manual_deployment_date.txt 
 
 '
 
