@@ -8,8 +8,20 @@
 # Terraform provider
 .terraform/
 
-# CSC authefication file
+# CSC authentication file
 .project_*-openrc.sh
 
 # Mac 
 .DS_Store
+
+# Ansible 
+.ansible
+
+# VScode 
+.vscode
+
+# SSH keys directory
+keys/
+
+# Rocky image directory
+rocky-image/
