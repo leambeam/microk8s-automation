@@ -1,0 +1,27 @@
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Terraform lock file
+*.lock.hcl
+
+# Terraform provider
+.terraform/
+
+# CSC authentication file
+.project_*-openrc.sh
+
+# Mac 
+.DS_Store
+
+# Ansible 
+.ansible
+
+# VScode 
+.vscode
+
+# SSH keys directory
+keys/
+
+# Rocky image directory
+rocky-image/

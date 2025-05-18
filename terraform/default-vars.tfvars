@@ -1,0 +1,9 @@
+ubuntu_security_group_ports = [22, 80, 443]
+rocky_security_group_ports  = [22, 80, 443]
+ubuntu_instance             = "standard.medium"
+rocky_instance              = "standard.medium"
+ubuntu_image                = "Ubuntu-24.04"
+rocky_image                 = "Rocky-9.5"
+public_network_name         = "public"
+private_network_id          = ""
+public_network_id           = ""
