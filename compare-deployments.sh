@@ -12,10 +12,10 @@ Examples:
 
   Running script:
 
-  bash scripts/compare-deployments.sh terraform ==> output: terraform_deployment_date.txt
-  bash scripts/compare-deployments.sh heat ==> output: heat_deployment_date.txt
-  bash scripts/compare-deployments.sh manual ==> output: manual_deployment_date.txt
-  bash scripts/compare-deployments.sh ==> output: unknown_deployment_date.txt
+  bash compare-deployments.sh terraform ==> output: terraform_deployment_date.txt
+  bash compare-deployments.sh heat ==> output: heat_deployment_date.txt
+  bash compare-deployments.sh manual ==> output: manual_deployment_date.txt
+  bash compare-deployments.sh ==> output: unknown_deployment_date.txt
 
   Comparing deployments:
 

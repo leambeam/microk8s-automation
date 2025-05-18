@@ -30,6 +30,7 @@ ROCKY_KEY="${KEYS_DIR}/rocky_key"
 # Display usage information
 show_usage() {
   echo "Infrastructure Management Script"
+  echo "Run it from the root directory of this project"
   echo ""
   echo "Usage: $0 <component> [command]"
   echo ""
