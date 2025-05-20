@@ -147,3 +147,10 @@
         chdir: presta-shop-helm-x/
       when: "'presta-helm' not in helm_list_result.stdout"
       changed_when: "'presta-helm' not in helm_list_result.stdout"
+
+    - name: Display all domains
+      ansible.builtin.debug:
+        msg: |
+          Domains:
+            - {{ inventory_hostname }}: {{ domain_result.stdout }}
+      delegate_facts: true
