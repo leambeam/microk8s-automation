@@ -242,7 +242,8 @@ case $COMPONENT in
     chmod 600 ${ROCKY_KEY}
     chmod 644 ${UBUNTU_KEY}.pub
     chmod 644 ${ROCKY_KEY}.pub
-    
+    chmod 700 ${KEYS_DIR}
+      
     handle_result "SSH key generation"
     ;;
   --help)
