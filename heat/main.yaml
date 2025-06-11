@@ -153,13 +153,11 @@ resources:
   # Floating IPs
   ubuntu_floating_ip:
     type: OS::Neutron::FloatingIP
-    depends_on: ubuntu_vm
     properties:
       floating_network: { get_param: public_network_id }
   
   rocky_floating_ip:
     type: OS::Neutron::FloatingIP
-    depends_on: rocky_vm
     properties:
       floating_network: { get_param: public_network_id }
 
