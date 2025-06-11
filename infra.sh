@@ -4,6 +4,7 @@ set -e # Exit on the first non zero return code
 ## Terraform
 TERRAFORM_DIR="terraform/"
 TERRAFORM_VAR_FILE="default-vars.tfvars"
+TERRAFORM_PLAN="infra"
 
 ## Heat
 HEAT_DIR="heat/"
@@ -109,8 +110,8 @@ case $COMPONENT in
       --deploy)
         # Run Terraform deployment commands inside the terraform/ directory and supply them with variables
         terraform -chdir=${TERRAFORM_DIR} init
-        terraform -chdir=${TERRAFORM_DIR} plan -var-file="${TERRAFORM_VAR_FILE}" 
-        terraform -chdir=${TERRAFORM_DIR} apply -var-file="${TERRAFORM_VAR_FILE}"
+        terraform -chdir=${TERRAFORM_DIR} plan -var-file="${TERRAFORM_VAR_FILE}" -out=${TERRAFORM_PLAN}
+        terraform -chdir=${TERRAFORM_DIR} apply ${TERRAFORM_PLAN}
         handle_result "Terraform deployment"
         ;;
       --destroy)
