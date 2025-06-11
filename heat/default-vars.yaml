@@ -1,8 +1,8 @@
 parameter_defaults:
   ubuntu_security_group_ports: "22,80,443"
   rocky_security_group_ports: "22,80,443"
-  ubuntu_instance: standard.medium
-  rocky_instance: standard.medium
+  ubuntu_flavor: standard.medium
+  rocky_flavor: standard.medium
   ubuntu_image: "Ubuntu-24.04"
   rocky_image: "Rocky-9.5"
   private_network_id: ""

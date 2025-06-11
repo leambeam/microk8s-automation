@@ -14,7 +14,7 @@ parameters:
     description: List of ports to open in Rocky security group (SSH, HTTP, HTTPS)
 
   # See all flavors: https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/ 
-  ubuntu_instance:
+  ubuntu_flavor:
     type: string
     label: Instance Type
     description: Flavor type for Ubuntu
@@ -26,7 +26,7 @@ parameters:
         - standard.large  # VCPUs: 4 | RAM: 7.8 | Billing/h: 2
   
   # See all flavors: https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/ 
-  rocky_instance:
+  rocky_flavor:
     type: string
     label: Instance Type
     description: Flavor type for Rocky
@@ -108,22 +108,21 @@ resources:
   ubuntu_private_network_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: private_network_id }
+      network: { get_param: private_network_id }
       security_groups: [{get_resource: ubuntu_security_group}]
   
   rocky_private_network_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: private_network_id }
+      network: { get_param: private_network_id }
       security_groups: [{get_resource: rocky_security_group}]
 
   # VM instances
   ubuntu_vm:
     type: OS::Nova::Server
-    description: Ubuntu VM
     properties:
       name: ubuntu-vm
-      flavor: { get_param: ubuntu_instance }
+      flavor: { get_param: ubuntu_flavor }
       availability_zone: nova
       key_name: { get_resource: ubuntu_ssh_key }
       networks: [ port: { get_resource: ubuntu_private_network_port }]
@@ -137,10 +136,9 @@ resources:
 
   rocky_vm:
     type: OS::Nova::Server
-    description: Rocky VM
     properties:
       name: rocky-vm
-      flavor: { get_param: rocky_instance }
+      flavor: { get_param: rocky_flavor }
       availability_zone: nova
       key_name: { get_resource: rocky_ssh_key }
       networks: [ port: { get_resource: rocky_private_network_port }]
@@ -155,14 +153,12 @@ resources:
   # Floating IPs
   ubuntu_floating_ip:
     type: OS::Neutron::FloatingIP
-    description: floating_ip for Ubuntu
     depends_on: ubuntu_vm
     properties:
       floating_network: { get_param: public_network_id }
   
   rocky_floating_ip:
     type: OS::Neutron::FloatingIP
-    description: floating_ip for Rocky
     depends_on: rocky_vm
     properties:
       floating_network: { get_param: public_network_id }
@@ -170,14 +166,12 @@ resources:
   # Floating IP associations
   ubuntu_floating_ip_association:
     type: OS::Neutron::FloatingIPAssociation
-    description: floating_ip association for Ubuntu
     properties:
       floatingip_id: { get_resource: ubuntu_floating_ip}
       port_id: { get_resource: ubuntu_private_network_port }
 
   rocky_floating_ip_association:
     type: OS::Neutron::FloatingIPAssociation
-    description: floating_ip association for Rocky
     properties:
       floatingip_id: { get_resource: rocky_floating_ip}
       port_id: { get_resource: rocky_private_network_port }
