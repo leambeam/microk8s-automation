@@ -5,6 +5,4 @@ python-openstackclient==7.4.0
 python-heatclient==4.1.0
 
 # Ansible
-# Using latest available version due to strict Python version dependencies
-# Pinned version used in implementation (ansible==11.4.0) may fail on older Python versions
-ansible
+ansible==11.4.0

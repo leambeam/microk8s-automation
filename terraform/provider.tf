@@ -10,5 +10,5 @@ terraform {
 
 # Provider configuration
 provider "openstack" {
-  # Authentication details will be sourced from the Openstack RC file
+  # Authentication details will be sourced from the Openstack *.rc file
 }
