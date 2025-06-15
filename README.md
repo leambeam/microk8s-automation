@@ -23,9 +23,7 @@ A new tool emerged when Terraform faced the backlash for the update of their lic
 
 ### Ansible
 
-You can also try using Ansible with OpenStack (i.e., for infrastructure deployment)
-
-1. OpenStack [collection](https://docs.ansible.com/ansible/latest/collections/openstack/cloud/index.html)
+You can also try using Ansible with OpenStack (i.e., for infrastructure deployment). See OpenStack collection [here](https://docs.ansible.com/ansible/latest/collections/openstack/cloud/index.html).
 
 ### Heat
 
