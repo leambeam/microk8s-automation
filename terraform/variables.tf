@@ -11,11 +11,11 @@ variable "rocky_security_group_ports" {
 }
 
 # See all flavors: https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/
-variable "ubuntu_instance" {
+variable "ubuntu_flavor" {
   type        = string
   description = "Flavor type for Ubuntu"
   validation {
-    condition     = contains(["standard.tiny", "standard.small", "standard.medium", "standard.large"], var.ubuntu_instance)
+    condition     = contains(["standard.tiny", "standard.small", "standard.medium", "standard.large"], var.ubuntu_flavor)
     error_message = "Valid values are standard.tiny, standard.small, standard.medium, or standard.large."
   }
   # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25 (standard.tiny)
@@ -25,11 +25,11 @@ variable "ubuntu_instance" {
 }
 
 # See all flavors: https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/
-variable "rocky_instance" {
+variable "rocky_flavor" {
   type        = string
   description = "Flavor type for Rocky"
   validation {
-    condition     = contains(["standard.tiny", "standard.small", "standard.medium", "standard.large"], var.rocky_instance)
+    condition     = contains(["standard.tiny", "standard.small", "standard.medium", "standard.large"], var.rocky_flavor)
     error_message = "Valid values are standard.tiny, standard.small, standard.medium, or standard.large."
   }
   # VCPUs: 1 | RAM: 0.9 | Billing/h: 0.25 (standard.tiny)
@@ -51,12 +51,6 @@ variable "rocky_image" {
 variable "private_network_id" {
   type        = string
   description = "ID of the private Neutron network for ports"
-  sensitive   = true
-}
-
-variable "public_network_id" {
-  type        = string
-  description = "ID of the public Neutron network for floating IPs"
   sensitive   = true
 }
 

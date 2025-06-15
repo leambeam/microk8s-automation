@@ -15,7 +15,6 @@ resource "openstack_networking_secgroup_rule_v2" "ubuntu_security_group_rule" {
   port_range_min    = var.ubuntu_security_group_ports[count.index]
   port_range_max    = var.ubuntu_security_group_ports[count.index]
   security_group_id = openstack_networking_secgroup_v2.ubuntu_security_group.id
-  depends_on        = [openstack_networking_secgroup_v2.ubuntu_security_group]
 }
 
 resource "openstack_networking_secgroup_v2" "rocky_security_group" {
@@ -32,7 +31,6 @@ resource "openstack_networking_secgroup_rule_v2" "rocky_security_group_rule" {
   port_range_min    = var.rocky_security_group_ports[count.index]
   port_range_max    = var.rocky_security_group_ports[count.index]
   security_group_id = openstack_networking_secgroup_v2.rocky_security_group.id
-  depends_on        = [openstack_networking_secgroup_v2.rocky_security_group]
 }
 
 # SSH Key pairs
@@ -71,7 +69,7 @@ data "openstack_images_image_v2" "rocky_image" {
 # VM instances
 resource "openstack_compute_instance_v2" "ubuntu_vm" {
   name              = "ubuntu-vm"
-  flavor_name       = var.ubuntu_instance
+  flavor_name       = var.ubuntu_flavor
   key_pair          = openstack_compute_keypair_v2.ubuntu_ssh_key.name
   availability_zone = "nova"
 
@@ -91,7 +89,7 @@ resource "openstack_compute_instance_v2" "ubuntu_vm" {
 
 resource "openstack_compute_instance_v2" "rocky_vm" {
   name              = "rocky-vm"
-  flavor_name       = var.rocky_instance
+  flavor_name       = var.rocky_flavor
   key_pair          = openstack_compute_keypair_v2.rocky_ssh_key.name
   availability_zone = "nova"
 
@@ -112,23 +110,19 @@ resource "openstack_compute_instance_v2" "rocky_vm" {
 # Floating IPs
 resource "openstack_networking_floatingip_v2" "ubuntu_floating_ip" {
   pool       = var.public_network_name
-  depends_on = [openstack_compute_instance_v2.ubuntu_vm]
 }
 
 resource "openstack_networking_floatingip_v2" "rocky_floating_ip" {
   pool       = var.public_network_name
-  depends_on = [openstack_compute_instance_v2.rocky_vm]
 }
 
 # Floating IP associations
 resource "openstack_networking_floatingip_associate_v2" "ubuntu_floating_ip_association" {
   floating_ip = openstack_networking_floatingip_v2.ubuntu_floating_ip.address
   port_id     = openstack_networking_port_v2.ubuntu_private_network_port.id
-  depends_on  = [openstack_compute_instance_v2.ubuntu_vm]
 }
 
 resource "openstack_networking_floatingip_associate_v2" "rocky_floating_ip_association" {
   floating_ip = openstack_networking_floatingip_v2.rocky_floating_ip.address
   port_id     = openstack_networking_port_v2.rocky_private_network_port.id
-  depends_on  = [openstack_compute_instance_v2.rocky_vm]
 }
