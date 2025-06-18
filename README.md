@@ -27,7 +27,7 @@ You can also try using Ansible with OpenStack (i.e., for infrastructure deployme
 
 ### Heat
 
-Current configurations in both Terraform and Heat are quite linear with no space for proper scaling. Resource Groups can be used to improve this. In short, you can create a template for a resource (e.g., Nova Server) once and then specify the number of resources you want deployed (i.e., five Nova Servers), instead of declaring them multiple times. Read more [here](https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Heat::ResourceGroup)
+Current configurations in both Terraform and Heat are quite linear with no space for proper scaling. In Heat, Resource Groups can be used to improve this. In short, you can create a template for a resource (e.g., Nova Server) once and then specify the number of resources you want deployed (i.e., five Nova Servers), instead of declaring them multiple times. Read more [here](https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Heat::ResourceGroup)
 
 ### CSC
 
