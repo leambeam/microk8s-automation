@@ -1,6 +1,6 @@
 # microk8s-automation
 
-This is a mirror of the GitLab repository containing the delivery of my Bachelor's thesis titled "Using Infrastructure as Code for Building a MicroK8s Environment on the CSC Cloud Platform" for the [Wimma Capstone](https://wimma-capstone.jamk.fi/) project. 
+This is a mirror of the GitLab repository containing the delivery of my Bachelor's thesis for the [Wimma Capstone](https://wimma-capstone.jamk.fi/) project titled "Using Infrastructure as Code for Building a MicroK8s Environment on the CSC Cloud Platform". 
 
 ## Objectives
 
