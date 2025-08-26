@@ -13,7 +13,7 @@ This is a mirror of the GitLab repository containing the delivery of my Bachelor
 1. I tested Heat (native OpenStack IaC tool) and Terraform for the infrastructure provisioning. I then used Ansible to install MicroK8s on VMs that were already provisioned and deploy the PrestaShop Helm chart on them.
 2. I created Heat and Terraform templates that both result in identical deployments of OpenStack resources such as Nova servers, Neutron security groups, Nova key pairs, and Neutron ports. I also created an Ansible playbook that performs the MicroK8s PrestaShop deployments on VMs with Rocky and Ubuntu images.
 3. I created a step-by-step guide with multiple deployment strategies.
-4. I created auxiliary scripts for provisioning and comparing infrastructure (i.e. comparing Heat and Terraform deployments).
+4. I created auxiliary scripts for provisioning and comparing infrastructure (e.g., comparing Heat and Terraform deployments).
 5. I outlined ideas for further development (see them in the original repository).
 
 ## Links
